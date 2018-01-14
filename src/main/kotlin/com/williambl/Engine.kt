@@ -2,55 +2,61 @@ package main.kotlin.com.williambl
 
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
+import org.lwjgl.glfw.GLFWFramebufferSizeCallback
 import org.lwjgl.glfw.GLFWKeyCallback
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GLUtil
 import org.lwjgl.system.MemoryUtil
 import java.lang.RuntimeException
 
 class Engine {
 
-    companion object {
-
-        val WINDOW_SIZE = Pair(800, 600)
-
-    }
-
     private var errorCallback : GLFWErrorCallback? = null
     private var keyCallback : GLFWKeyCallback? = null
 
     private var window : Long? = null
+    private var width : Int = 800
+    private var height: Int = 800
 
     private fun init() {
 
-        // Setup an error callback. The default implementation
-        // will print the error message in System.err.
+        //Create an error callback
         errorCallback = glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err))
 
-        // Initialize GLFW. Most GLFW functions will not work before doing this.
-        if ( glfwInit() != true ) {
-            throw java.lang.IllegalStateException("Unable to initialize GLFW")
-        }
+        //Try to init glfw
+        if (!glfwInit())
+            throw IllegalStateException("Unable to initialize GLFW")
 
-        // Configure our window
+        //Set up our window
         glfwDefaultWindowHints()
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2)
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE)
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE)
 
         // Create the window
-        window = glfwCreateWindow(WINDOW_SIZE.first, WINDOW_SIZE.second, "Hello World!", MemoryUtil.NULL, MemoryUtil.NULL)
+        window = glfwCreateWindow(width, height, "Currently nothing, just a blank screen...", MemoryUtil.NULL, MemoryUtil.NULL)
         if (window == MemoryUtil.NULL) {
-            throw RuntimeException("Failed to create the GLFW window")
+            throw AssertionError("Failed to create the GLFW window")
         }
 
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        keyCallback = glfwSetKeyCallback(window!!, object : GLFWKeyCallback() {
-            override fun invoke(window: kotlin.Long,
-                                key: kotlin.Int,
-                                scancode: kotlin.Int,
-                                action: kotlin.Int,
-                                mods: kotlin.Int) {
+        // Set up a framebuffer size callback. It will be called every time the framebuffer is resized
+        glfwSetFramebufferSizeCallback(window!!, object : GLFWFramebufferSizeCallback() {
+            override fun invoke(window: Long, width: Int, height: Int) {
+                if (width > 0 && height > 0
+                        && (width != width || height != height)) {
+                    this@Engine.width = width
+                    this@Engine.height = height
+                }
+            }
+        })
 
+        // Set up a key callback. It will be called every time a key is pressed, repeated or released.
+        keyCallback = glfwSetKeyCallback(window!!, object : GLFWKeyCallback() {
+            override fun invoke(window: Long, key: Int, scancode: Int, action: Int, mods: Int) {
                 if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE ) {
                     glfwSetWindowShouldClose(window, true)
                 }
@@ -64,8 +70,8 @@ class Engine {
         // Center our window
         glfwSetWindowPos(
                 window!!,
-                (vidmode.width() - WINDOW_SIZE.first) / 2,
-                (vidmode.height() - WINDOW_SIZE.second) / 2
+                (vidmode.width() - width) / 2,
+                (vidmode.height() - height) / 2
         );
 
         // Make the OpenGL context current
@@ -76,6 +82,17 @@ class Engine {
         // Make the window visible
         glfwShowWindow(window!!)
 
+        //Code from lwjgldemos, not working yet
+        //caps = GL.createCapabilities()
+        //debugProc = GLUtil.setupDebugMessageCallback()
+
+        //glEnable(GL_DEPTH_TEST)
+        //glEnable(GL_CULL_FACE)
+
+        /* Create all needed GL resources */
+        //createVao()
+        //createRasterProgram()
+        //initProgram()
     }
 
     private fun loop() {
