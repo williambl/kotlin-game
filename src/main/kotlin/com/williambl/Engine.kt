@@ -1,14 +1,25 @@
 package main.kotlin.com.williambl
 
+import com.oracle.util.Checksums.update
+import com.sun.scenario.effect.impl.prism.PrEffectHelper.render
+import com.williambl.util.createShader
+import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback
 import org.lwjgl.glfw.GLFWKeyCallback
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL15.*
+import org.lwjgl.opengl.GL20.*
+import org.lwjgl.opengl.GL30.*
+import org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER
 import org.lwjgl.opengl.GLUtil
 import org.lwjgl.system.MemoryUtil
+import java.io.IOException
 import java.lang.RuntimeException
+import java.nio.IntBuffer
 
 class Engine {
 
@@ -17,7 +28,17 @@ class Engine {
 
     private var window : Long? = null
     private var width : Int = 800
-    private var height: Int = 800
+    private var height : Int = 800
+
+    private var vao : Int? = null
+    private var program: Int? = null
+
+    private var viewMatrixUniform: Int = 0
+    private var projMatrixUniform: Int = 0
+    private var viewportSizeUniform: Int = 0
+    internal var viewMatrix = javax.vecmath.Matrix4f()
+    internal var projMatrix = javax.vecmath.Matrix4f()
+    internal var matrixBuffer = BufferUtils.createFloatBuffer(16)
 
     private fun init() {
 
@@ -90,9 +111,116 @@ class Engine {
         //glEnable(GL_CULL_FACE)
 
         /* Create all needed GL resources */
-        //createVao()
-        //createRasterProgram()
-        //initProgram()
+        createVao()
+        createRasterProgram()
+        initProgram()
+    }
+
+    internal fun quadPattern(vb: IntBuffer) {
+        vb.put(1).put(0).put(1).put(1).put(0).put(1)
+    }
+
+    internal fun quadWithDiagonalPattern(vb: IntBuffer) {
+        vb.put(1).put(1).put(1).put(1).put(1).put(1)
+    }
+
+    internal fun createVao() {
+        this.vao = glGenVertexArrays()
+        glBindVertexArray(vao)
+        val vb = BufferUtils.createIntBuffer(6 * 6)
+        val pb = BufferUtils.createFloatBuffer(3 * 6 * 6)
+        quadPattern(vb)
+        pb.put(0.5f).put(0.5f).put(-0.5f)
+        pb.put(0.5f).put(-0.5f).put(-0.5f)
+        pb.put(-0.5f).put(-0.5f).put(-0.5f)
+        pb.put(-0.5f).put(-0.5f).put(-0.5f)
+        pb.put(-0.5f).put(0.5f).put(-0.5f)
+        pb.put(0.5f).put(0.5f).put(-0.5f)
+        quadWithDiagonalPattern(vb)
+        pb.put(0.5f).put(-0.5f).put(0.5f)
+        pb.put(0.5f).put(0.5f).put(0.5f)
+        pb.put(-0.5f).put(0.5f).put(0.5f)
+        pb.put(-0.5f).put(0.5f).put(0.5f)
+        pb.put(-0.5f).put(-0.5f).put(0.5f)
+        pb.put(0.5f).put(-0.5f).put(0.5f)
+        quadPattern(vb)
+        pb.put(0.5f).put(-0.5f).put(-0.5f)
+        pb.put(0.5f).put(0.5f).put(-0.5f)
+        pb.put(0.5f).put(0.5f).put(0.5f)
+        pb.put(0.5f).put(0.5f).put(0.5f)
+        pb.put(0.5f).put(-0.5f).put(0.5f)
+        pb.put(0.5f).put(-0.5f).put(-0.5f)
+        quadWithDiagonalPattern(vb)
+        pb.put(-0.5f).put(-0.5f).put(0.5f)
+        pb.put(-0.5f).put(0.5f).put(0.5f)
+        pb.put(-0.5f).put(0.5f).put(-0.5f)
+        pb.put(-0.5f).put(0.5f).put(-0.5f)
+        pb.put(-0.5f).put(-0.5f).put(-0.5f)
+        pb.put(-0.5f).put(-0.5f).put(0.5f)
+        quadPattern(vb)
+        pb.put(0.5f).put(0.5f).put(0.5f)
+        pb.put(0.5f).put(0.5f).put(-0.5f)
+        pb.put(-0.5f).put(0.5f).put(-0.5f)
+        pb.put(-0.5f).put(0.5f).put(-0.5f)
+        pb.put(-0.5f).put(0.5f).put(0.5f)
+        pb.put(0.5f).put(0.5f).put(0.5f)
+        quadWithDiagonalPattern(vb)
+        pb.put(0.5f).put(-0.5f).put(-0.5f)
+        pb.put(0.5f).put(-0.5f).put(0.5f)
+        pb.put(-0.5f).put(-0.5f).put(0.5f)
+        pb.put(-0.5f).put(-0.5f).put(0.5f)
+        pb.put(-0.5f).put(-0.5f).put(-0.5f)
+        pb.put(0.5f).put(-0.5f).put(-0.5f)
+        pb.flip()
+        vb.flip()
+        // setup vertex positions buffer
+        val posVbo = glGenBuffers()
+        glBindBuffer(GL_ARRAY_BUFFER, posVbo)
+        glBufferData(GL_ARRAY_BUFFER, pb, GL_STATIC_DRAW)
+        glEnableVertexAttribArray(0)
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0L)
+        // setup vertex visibility buffer
+        val visVbo = glGenBuffers()
+        glBindBuffer(GL_ARRAY_BUFFER, visVbo)
+        glBufferData(GL_ARRAY_BUFFER, vb, GL_STATIC_DRAW)
+        glEnableVertexAttribArray(1)
+        glVertexAttribPointer(1, 1, GL_UNSIGNED_INT, false, 0, 0L)
+        glBindVertexArray(0)
+    }
+
+    @Throws(IOException::class)
+    internal fun createRasterProgram() {
+        val program = glCreateProgram()
+        val vshader = createShader("org/lwjgl/demo/opengl/geometry/vs.glsl", GL_VERTEX_SHADER)
+        val fshader = createShader("org/lwjgl/demo/opengl/geometry/fs.glsl", GL_FRAGMENT_SHADER)
+        val gshader = createShader("org/lwjgl/demo/opengl/geometry/gs.glsl", GL_GEOMETRY_SHADER)
+        glAttachShader(program, vshader)
+        glAttachShader(program, fshader)
+        glAttachShader(program, gshader)
+        glBindAttribLocation(program, 0, "position")
+        glBindAttribLocation(program, 1, "visible")
+        glBindFragDataLocation(program, 0, "color")
+        glLinkProgram(program)
+        val linked = glGetProgrami(program, GL_LINK_STATUS)
+        val programLog = glGetProgramInfoLog(program)
+        if (programLog != null && programLog.trim({ it <= ' ' }).length > 0) {
+            System.err.println(programLog)
+        }
+        if (linked == 0) {
+            throw AssertionError("Could not link program")
+        }
+        this.program = program
+    }
+
+    /**
+     * Initialize the shader program.
+     */
+    internal fun initProgram() {
+        glUseProgram(this.program!!)
+        viewMatrixUniform = glGetUniformLocation(this.program!!, "viewMatrix")
+        projMatrixUniform = glGetUniformLocation(this.program!!, "projMatrix")
+        viewportSizeUniform = glGetUniformLocation(this.program!!, "viewportSize")
+        glUseProgram(0)
     }
 
     private fun loop() {
@@ -122,6 +250,43 @@ class Engine {
             glfwPollEvents();
         }
 
+    }
+
+    internal fun loop() {
+        while (!glfwWindowShouldClose(window!!)) {
+            glfwPollEvents()
+            glViewport(0, 0, width, height)
+            glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+
+            update()
+            render()
+
+            glfwSwapBuffers(window!!)
+        }
+    }
+
+    //Any game code would go in here.
+    internal fun update() {
+        projMatrix.setPerspective(Math.toRadians(30.0).toFloat(), width.toFloat() / height, 0.01f, 50.0f)
+        val thisTime = System.nanoTime()
+        val diff = (thisTime - lastTime) / 1E9f
+        angle += diff
+        viewMatrix.setLookAt(0.0f, 2.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f).rotateY(angle)
+        lastTime = thisTime
+    }
+
+    internal fun render() {
+        glUseProgram(this.program!!)
+
+        glUniformMatrix4fv(viewMatrixUniform, false, viewMatrix.get(matrixBuffer))
+        glUniformMatrix4fv(projMatrixUniform, false, projMatrix.get(matrixBuffer))
+        glUniform2f(viewportSizeUniform, width.toFloat(), height.toFloat())
+
+        glBindVertexArray(vao!!)
+        glDrawArrays(GL_TRIANGLES, 0, 3 * 2 * 6)
+        glBindVertexArray(0)
+
+        glUseProgram(0)
     }
 
     fun run() {
