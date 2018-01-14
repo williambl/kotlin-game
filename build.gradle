@@ -16,6 +16,7 @@ buildscript {
     ext {
         kotlinVersion = '1.2.0'
         lwjglVersion = '3.1.5'
+        vecmathVersion = '1.5.2'
 
         switch (OperatingSystem.current()) {
             case OperatingSystem.WINDOWS:
@@ -50,6 +51,7 @@ targetCompatibility = 1.8
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
 
+    compile "javax.vecmath:vecmath:${vecmathVersion}"
     compile "org.lwjgl:lwjgl:${lwjglVersion}"
     compile "org.lwjgl:lwjgl-assimp:${lwjglVersion}"
     compile "org.lwjgl:lwjgl-bgfx:${lwjglVersion}"
