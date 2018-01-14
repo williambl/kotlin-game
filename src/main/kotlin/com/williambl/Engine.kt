@@ -104,12 +104,11 @@ class Engine {
         // Make the window visible
         glfwShowWindow(window!!)
 
-        //Code from lwjgldemos, not working yet
-        //caps = GL.createCapabilities()
-        //debugProc = GLUtil.setupDebugMessageCallback()
+        GL.createCapabilities()
+        GLUtil.setupDebugMessageCallback()
 
-        //glEnable(GL_DEPTH_TEST)
-        //glEnable(GL_CULL_FACE)
+        glEnable(GL_DEPTH_TEST)
+        glEnable(GL_CULL_FACE)
 
         /* Create all needed GL resources */
         createVao()
@@ -192,9 +191,9 @@ class Engine {
     @Throws(IOException::class)
     internal fun createRasterProgram() {
         val program = glCreateProgram()
-        val vshader = createShader("org/lwjgl/demo/opengl/geometry/vs.glsl", GL_VERTEX_SHADER)
-        val fshader = createShader("org/lwjgl/demo/opengl/geometry/fs.glsl", GL_FRAGMENT_SHADER)
-        val gshader = createShader("org/lwjgl/demo/opengl/geometry/gs.glsl", GL_GEOMETRY_SHADER)
+        val vshader = createShader("com/williambl/kotlin-game/vs.glsl", GL_VERTEX_SHADER)
+        val fshader = createShader("com/williambl/kotlin-game/fs.glsl", GL_FRAGMENT_SHADER)
+        val gshader = createShader("com/williambl/kotlin-game/gs.glsl", GL_GEOMETRY_SHADER)
         glAttachShader(program, vshader)
         glAttachShader(program, fshader)
         glAttachShader(program, gshader)
