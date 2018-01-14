@@ -3,6 +3,7 @@ package main.kotlin.com.williambl
 import com.oracle.util.Checksums.update
 import com.sun.scenario.effect.impl.prism.PrEffectHelper.render
 import com.williambl.util.createShader
+import org.joml.Matrix4f
 import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
@@ -36,8 +37,8 @@ class Engine {
     private var viewMatrixUniform: Int = 0
     private var projMatrixUniform: Int = 0
     private var viewportSizeUniform: Int = 0
-    internal var viewMatrix = javax.vecmath.Matrix4f()
-    internal var projMatrix = javax.vecmath.Matrix4f()
+    internal var viewMatrix = Matrix4f()
+    internal var projMatrix = Matrix4f()
     internal var matrixBuffer = BufferUtils.createFloatBuffer(16)
 
     private fun init() {
@@ -126,7 +127,7 @@ class Engine {
 
     internal fun createVao() {
         this.vao = glGenVertexArrays()
-        glBindVertexArray(vao)
+        glBindVertexArray(vao!!)
         val vb = BufferUtils.createIntBuffer(6 * 6)
         val pb = BufferUtils.createFloatBuffer(3 * 6 * 6)
         quadPattern(vb)
@@ -223,7 +224,7 @@ class Engine {
         glUseProgram(0)
     }
 
-    private fun loop() {
+    /*private fun loop() {
 
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
@@ -250,7 +251,7 @@ class Engine {
             glfwPollEvents();
         }
 
-    }
+    }*/
 
     internal fun loop() {
         while (!glfwWindowShouldClose(window!!)) {
@@ -264,6 +265,9 @@ class Engine {
             glfwSwapBuffers(window!!)
         }
     }
+
+    internal var angle = 0.0f
+    internal var lastTime = System.nanoTime()
 
     //Any game code would go in here.
     internal fun update() {
