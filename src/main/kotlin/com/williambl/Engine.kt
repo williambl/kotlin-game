@@ -223,35 +223,6 @@ class Engine {
         glUseProgram(0)
     }
 
-    /*private fun loop() {
-
-        // This line is critical for LWJGL's interoperation with GLFW's
-        // OpenGL context, or any context that is managed externally.
-        // LWJGL detects the context that is current in the current thread,
-        // creates the GLCapabilities instance and makes the OpenGL
-        // bindings available for use.
-        GL.createCapabilities()
-
-        // Set the clear color
-        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-        // Run the rendering loop until the user has attempted to close
-        // the window or has pressed the ESCAPE key.
-        while (!glfwWindowShouldClose(window!!)) {
-
-            // Clear the framebuffer
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT or GL11.GL_DEPTH_BUFFER_BIT)
-
-            // Swap the color buffers
-            glfwSwapBuffers(window!!);
-
-            // Poll for window events. The key callback above will only be
-            // invoked during this call.
-            glfwPollEvents();
-        }
-
-    }*/
-
     internal fun loop() {
         while (!glfwWindowShouldClose(window!!)) {
             glfwPollEvents()
