@@ -1,6 +1,7 @@
 package main.kotlin.com.williambl
 
 import com.williambl.util.createShader
+import com.williambl.util.createWindow
 import org.joml.Matrix4f
 import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.GLFW.*
@@ -27,8 +28,8 @@ class Engine {
     private var width : Int = 800
     private var height : Int = 800
 
-    private var vao : Int? = null
-    private var program: Int? = null
+    private var cubeVAO: Int? = null
+    private var cubeProgram: Int? = null
 
     private var viewMatrixUniform: Int = 0
     private var projMatrixUniform: Int = 0
@@ -56,7 +57,7 @@ class Engine {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE)
 
         // Create the window
-        window = glfwCreateWindow(width, height, "Currently nothing, just a blank screen...", MemoryUtil.NULL, MemoryUtil.NULL)
+        window = createWindow(width, height, "Cube!")
         if (window == MemoryUtil.NULL) {
             throw AssertionError("Failed to create the GLFW window")
         }
@@ -107,9 +108,9 @@ class Engine {
         glEnable(GL_CULL_FACE)
 
         /* Create all needed GL resources */
-        createVao()
-        createRasterProgram()
-        initProgram()
+        createCubeVao()
+        createCubeProgram()
+        initCubeProgram()
     }
 
     private fun quadPattern(vb: IntBuffer) {
@@ -120,9 +121,9 @@ class Engine {
         vb.put(1).put(1).put(1).put(1).put(1).put(1)
     }
 
-    private fun createVao() {
-        this.vao = glGenVertexArrays()
-        glBindVertexArray(vao!!)
+    private fun createCubeVao() {
+        this.cubeVAO = glGenVertexArrays()
+        glBindVertexArray(cubeVAO!!)
         val vb = BufferUtils.createIntBuffer(6 * 6)
         val pb = BufferUtils.createFloatBuffer(3 * 6 * 6)
         quadPattern(vb)
@@ -185,7 +186,7 @@ class Engine {
     }
 
     @Throws(IOException::class)
-    private fun createRasterProgram() {
+    private fun createCubeProgram() {
         val program = glCreateProgram()
         val vshader = createShader("com/williambl/kotlin-game/vs.glsl", GL_VERTEX_SHADER)
         val fshader = createShader("com/williambl/kotlin-game/fs.glsl", GL_FRAGMENT_SHADER)
@@ -203,19 +204,19 @@ class Engine {
             System.err.println(programLog)
         }
         if (linked == 0) {
-            throw AssertionError("Could not link program")
+            throw AssertionError("Could not link cubeProgram")
         }
-        this.program = program
+        this.cubeProgram = program
     }
 
     /**
-     * Initialize the shader program.
+     * Initialize the shader cubeProgram.
      */
-    private fun initProgram() {
-        glUseProgram(this.program!!)
-        viewMatrixUniform = glGetUniformLocation(this.program!!, "viewMatrix")
-        projMatrixUniform = glGetUniformLocation(this.program!!, "projMatrix")
-        viewportSizeUniform = glGetUniformLocation(this.program!!, "viewportSize")
+    private fun initCubeProgram() {
+        glUseProgram(this.cubeProgram!!)
+        viewMatrixUniform = glGetUniformLocation(this.cubeProgram!!, "viewMatrix")
+        projMatrixUniform = glGetUniformLocation(this.cubeProgram!!, "projMatrix")
+        viewportSizeUniform = glGetUniformLocation(this.cubeProgram!!, "viewportSize")
         glUseProgram(0)
     }
 
@@ -246,13 +247,13 @@ class Engine {
     }
 
     private fun render() {
-        glUseProgram(this.program!!)
+        glUseProgram(this.cubeProgram!!)
 
         glUniformMatrix4fv(viewMatrixUniform, false, viewMatrix.get(matrixBuffer))
         glUniformMatrix4fv(projMatrixUniform, false, projMatrix.get(matrixBuffer))
         glUniform2f(viewportSizeUniform, width.toFloat(), height.toFloat())
 
-        glBindVertexArray(vao!!)
+        glBindVertexArray(cubeVAO!!)
         glDrawArrays(GL_TRIANGLES, 0, 3 * 2 * 6)
         glBindVertexArray(0)
 

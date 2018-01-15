@@ -1,7 +1,10 @@
 package com.williambl.util
 
 import org.lwjgl.BufferUtils
+import org.lwjgl.glfw.GLFW.glfwCreateWindow
+import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL20.*
+import org.lwjgl.system.MemoryUtil
 import org.lwjgl.system.MemoryUtil.memUTF8
 import java.io.File
 import java.io.FileInputStream
@@ -133,4 +136,34 @@ private fun resizeBuffer(buffer: ByteBuffer, newCapacity: Int): ByteBuffer {
     buffer.flip()
     newBuffer.put(buffer)
     return newBuffer
+}
+
+/**
+ * Create a window with the given dimensions and title.
+ *
+ * @param width
+ * the window width
+ * @param height
+ * the window height
+ * @param title
+ * the window title
+ *
+ * @return the window
+ */
+fun createWindow(width: Int, height: Int, title: String) : Long {
+    return glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL)
+}
+
+fun createFullScreenQuad() : ByteBuffer {
+    var vertices = BufferUtils.createByteBuffer(4 * 2 * 6)
+    val fv = vertices.asFloatBuffer()
+    fv.put(-1.0f).put(-1.0f)
+    fv.put(1.0f).put(-1.0f)
+    fv.put(1.0f).put(1.0f)
+    fv.put(1.0f).put(1.0f)
+    fv.put(-1.0f).put(1.0f)
+    fv.put(-1.0f).put(-1.0f)
+    glEnableClientState(GL_VERTEX_ARRAY)
+    glVertexPointer(2, GL_FLOAT, 0, vertices)
+    return vertices
 }
