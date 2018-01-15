@@ -1,7 +1,5 @@
 package main.kotlin.com.williambl
 
-import com.oracle.util.Checksums.update
-import com.sun.scenario.effect.impl.prism.PrEffectHelper.render
 import com.williambl.util.createShader
 import org.joml.Matrix4f
 import org.lwjgl.BufferUtils
@@ -10,7 +8,6 @@ import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback
 import org.lwjgl.glfw.GLFWKeyCallback
 import org.lwjgl.opengl.GL
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL15.*
 import org.lwjgl.opengl.GL20.*
@@ -19,7 +16,6 @@ import org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER
 import org.lwjgl.opengl.GLUtil
 import org.lwjgl.system.MemoryUtil
 import java.io.IOException
-import java.lang.RuntimeException
 import java.nio.IntBuffer
 
 class Engine {
@@ -116,15 +112,15 @@ class Engine {
         initProgram()
     }
 
-    internal fun quadPattern(vb: IntBuffer) {
+    private fun quadPattern(vb: IntBuffer) {
         vb.put(1).put(0).put(1).put(1).put(0).put(1)
     }
 
-    internal fun quadWithDiagonalPattern(vb: IntBuffer) {
+    private fun quadWithDiagonalPattern(vb: IntBuffer) {
         vb.put(1).put(1).put(1).put(1).put(1).put(1)
     }
 
-    internal fun createVao() {
+    private fun createVao() {
         this.vao = glGenVertexArrays()
         glBindVertexArray(vao!!)
         val vb = BufferUtils.createIntBuffer(6 * 6)
@@ -189,7 +185,7 @@ class Engine {
     }
 
     @Throws(IOException::class)
-    internal fun createRasterProgram() {
+    private fun createRasterProgram() {
         val program = glCreateProgram()
         val vshader = createShader("com/williambl/kotlin-game/vs.glsl", GL_VERTEX_SHADER)
         val fshader = createShader("com/williambl/kotlin-game/fs.glsl", GL_FRAGMENT_SHADER)
@@ -215,7 +211,7 @@ class Engine {
     /**
      * Initialize the shader program.
      */
-    internal fun initProgram() {
+    private fun initProgram() {
         glUseProgram(this.program!!)
         viewMatrixUniform = glGetUniformLocation(this.program!!, "viewMatrix")
         projMatrixUniform = glGetUniformLocation(this.program!!, "projMatrix")
@@ -223,7 +219,7 @@ class Engine {
         glUseProgram(0)
     }
 
-    internal fun loop() {
+    private fun loop() {
         while (!glfwWindowShouldClose(window!!)) {
             glfwPollEvents()
             glViewport(0, 0, width, height)
@@ -249,7 +245,7 @@ class Engine {
         lastTime = thisTime
     }
 
-    internal fun render() {
+    private fun render() {
         glUseProgram(this.program!!)
 
         glUniformMatrix4fv(viewMatrixUniform, false, viewMatrix.get(matrixBuffer))
