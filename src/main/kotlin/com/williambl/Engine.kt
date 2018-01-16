@@ -1,5 +1,6 @@
 package main.kotlin.com.williambl
 
+import com.williambl.Game
 import com.williambl.renderObject.Cube
 import com.williambl.util.createShader
 import com.williambl.util.createWindow
@@ -21,6 +22,8 @@ import java.io.IOException
 import java.nio.IntBuffer
 
 class Engine {
+
+    internal var game = Game(this)
 
     private var errorCallback : GLFWErrorCallback? = null
     private var keyCallback : GLFWKeyCallback? = null
@@ -114,24 +117,11 @@ class Engine {
             glViewport(0, 0, width, height)
             glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-            update()
+            game.update()
             render()
 
             glfwSwapBuffers(window!!)
         }
-    }
-
-    internal var angle = 0.0f
-    internal var lastTime = System.nanoTime()
-
-    //Any game code would go in here.
-    internal fun update() {
-        projMatrix.setPerspective(Math.toRadians(30.0).toFloat(), width.toFloat() / height, 0.01f, 50.0f)
-        val thisTime = System.nanoTime()
-        val diff = (thisTime - lastTime) / 1E9f
-        angle += diff
-        viewMatrix.setLookAt(0.0f, 2.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f).rotateY(angle)
-        lastTime = thisTime
     }
 
     private fun render() {
