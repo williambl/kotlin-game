@@ -1,5 +1,6 @@
 package main.kotlin.com.williambl
 
+import com.williambl.renderObject.Cube
 import com.williambl.util.createShader
 import com.williambl.util.createWindow
 import org.joml.Matrix4f
@@ -25,15 +26,11 @@ class Engine {
     private var keyCallback : GLFWKeyCallback? = null
 
     private var window : Long? = null
-    private var width : Int = 800
-    private var height : Int = 800
+    internal var width : Int = 800
+    internal var height : Int = 800
 
-    private var cubeVAO: Int? = null
-    private var cubeProgram: Int? = null
+    private lateinit var cube : Cube
 
-    private var viewMatrixUniform: Int = 0
-    private var projMatrixUniform: Int = 0
-    private var viewportSizeUniform: Int = 0
     internal var viewMatrix = Matrix4f()
     internal var projMatrix = Matrix4f()
     internal var matrixBuffer = BufferUtils.createFloatBuffer(16)
@@ -108,116 +105,7 @@ class Engine {
         glEnable(GL_CULL_FACE)
 
         /* Create all needed GL resources */
-        createCubeVao()
-        createCubeProgram()
-        initCubeProgram()
-    }
-
-    private fun quadPattern(vb: IntBuffer) {
-        vb.put(1).put(0).put(1).put(1).put(0).put(1)
-    }
-
-    private fun quadWithDiagonalPattern(vb: IntBuffer) {
-        vb.put(1).put(1).put(1).put(1).put(1).put(1)
-    }
-
-    private fun createCubeVao() {
-        this.cubeVAO = glGenVertexArrays()
-        glBindVertexArray(cubeVAO!!)
-        val vb = BufferUtils.createIntBuffer(6 * 6)
-        val pb = BufferUtils.createFloatBuffer(3 * 6 * 6)
-        quadPattern(vb)
-        pb.put(0.5f).put(0.5f).put(-0.5f)
-        pb.put(0.5f).put(-0.5f).put(-0.5f)
-        pb.put(-0.5f).put(-0.5f).put(-0.5f)
-        pb.put(-0.5f).put(-0.5f).put(-0.5f)
-        pb.put(-0.5f).put(0.5f).put(-0.5f)
-        pb.put(0.5f).put(0.5f).put(-0.5f)
-        quadWithDiagonalPattern(vb)
-        pb.put(0.5f).put(-0.5f).put(0.5f)
-        pb.put(0.5f).put(0.5f).put(0.5f)
-        pb.put(-0.5f).put(0.5f).put(0.5f)
-        pb.put(-0.5f).put(0.5f).put(0.5f)
-        pb.put(-0.5f).put(-0.5f).put(0.5f)
-        pb.put(0.5f).put(-0.5f).put(0.5f)
-        quadPattern(vb)
-        pb.put(0.5f).put(-0.5f).put(-0.5f)
-        pb.put(0.5f).put(0.5f).put(-0.5f)
-        pb.put(0.5f).put(0.5f).put(0.5f)
-        pb.put(0.5f).put(0.5f).put(0.5f)
-        pb.put(0.5f).put(-0.5f).put(0.5f)
-        pb.put(0.5f).put(-0.5f).put(-0.5f)
-        quadWithDiagonalPattern(vb)
-        pb.put(-0.5f).put(-0.5f).put(0.5f)
-        pb.put(-0.5f).put(0.5f).put(0.5f)
-        pb.put(-0.5f).put(0.5f).put(-0.5f)
-        pb.put(-0.5f).put(0.5f).put(-0.5f)
-        pb.put(-0.5f).put(-0.5f).put(-0.5f)
-        pb.put(-0.5f).put(-0.5f).put(0.5f)
-        quadPattern(vb)
-        pb.put(0.5f).put(0.5f).put(0.5f)
-        pb.put(0.5f).put(0.5f).put(-0.5f)
-        pb.put(-0.5f).put(0.5f).put(-0.5f)
-        pb.put(-0.5f).put(0.5f).put(-0.5f)
-        pb.put(-0.5f).put(0.5f).put(0.5f)
-        pb.put(0.5f).put(0.5f).put(0.5f)
-        quadWithDiagonalPattern(vb)
-        pb.put(0.5f).put(-0.5f).put(-0.5f)
-        pb.put(0.5f).put(-0.5f).put(0.5f)
-        pb.put(-0.5f).put(-0.5f).put(0.5f)
-        pb.put(-0.5f).put(-0.5f).put(0.5f)
-        pb.put(-0.5f).put(-0.5f).put(-0.5f)
-        pb.put(0.5f).put(-0.5f).put(-0.5f)
-        pb.flip()
-        vb.flip()
-        // setup vertex positions buffer
-        val posVbo = glGenBuffers()
-        glBindBuffer(GL_ARRAY_BUFFER, posVbo)
-        glBufferData(GL_ARRAY_BUFFER, pb, GL_STATIC_DRAW)
-        glEnableVertexAttribArray(0)
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0L)
-        // setup vertex visibility buffer
-        val visVbo = glGenBuffers()
-        glBindBuffer(GL_ARRAY_BUFFER, visVbo)
-        glBufferData(GL_ARRAY_BUFFER, vb, GL_STATIC_DRAW)
-        glEnableVertexAttribArray(1)
-        glVertexAttribPointer(1, 1, GL_UNSIGNED_INT, false, 0, 0L)
-        glBindVertexArray(0)
-    }
-
-    @Throws(IOException::class)
-    private fun createCubeProgram() {
-        val program = glCreateProgram()
-        val vshader = createShader("com/williambl/kotlin-game/vs.glsl", GL_VERTEX_SHADER)
-        val fshader = createShader("com/williambl/kotlin-game/fs.glsl", GL_FRAGMENT_SHADER)
-        val gshader = createShader("com/williambl/kotlin-game/gs.glsl", GL_GEOMETRY_SHADER)
-        glAttachShader(program, vshader)
-        glAttachShader(program, fshader)
-        glAttachShader(program, gshader)
-        glBindAttribLocation(program, 0, "position")
-        glBindAttribLocation(program, 1, "visible")
-        glBindFragDataLocation(program, 0, "color")
-        glLinkProgram(program)
-        val linked = glGetProgrami(program, GL_LINK_STATUS)
-        val programLog = glGetProgramInfoLog(program)
-        if (programLog != null && programLog.trim({ it <= ' ' }).length > 0) {
-            System.err.println(programLog)
-        }
-        if (linked == 0) {
-            throw AssertionError("Could not link cubeProgram")
-        }
-        this.cubeProgram = program
-    }
-
-    /**
-     * Initialize the shader cubeProgram.
-     */
-    private fun initCubeProgram() {
-        glUseProgram(this.cubeProgram!!)
-        viewMatrixUniform = glGetUniformLocation(this.cubeProgram!!, "viewMatrix")
-        projMatrixUniform = glGetUniformLocation(this.cubeProgram!!, "projMatrix")
-        viewportSizeUniform = glGetUniformLocation(this.cubeProgram!!, "viewportSize")
-        glUseProgram(0)
+        cube = Cube(this)
     }
 
     private fun loop() {
@@ -247,16 +135,7 @@ class Engine {
     }
 
     private fun render() {
-        glUseProgram(this.cubeProgram!!)
-
-        glUniformMatrix4fv(viewMatrixUniform, false, viewMatrix.get(matrixBuffer))
-        glUniformMatrix4fv(projMatrixUniform, false, projMatrix.get(matrixBuffer))
-        glUniform2f(viewportSizeUniform, width.toFloat(), height.toFloat())
-
-        glBindVertexArray(cubeVAO!!)
-        glDrawArrays(GL_TRIANGLES, 0, 3 * 2 * 6)
-        glBindVertexArray(0)
-
+        cube.render()
         glUseProgram(0)
     }
 
