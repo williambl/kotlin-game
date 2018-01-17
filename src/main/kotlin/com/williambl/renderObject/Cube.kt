@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL30.*
 import org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER
 import java.nio.IntBuffer
 
-class Cube constructor(engine: Engine) {
+class Cube constructor(engine: Engine) : RenderObject() {
 
     private var viewMatrixUniform: Int = 0
     private var projMatrixUniform: Int = 0
@@ -131,7 +131,7 @@ class Cube constructor(engine: Engine) {
         vb.put(1).put(1).put(1).put(1).put(1).put(1)
     }
 
-    fun render () {
+    override fun render () {
         glUseProgram(program)
 
         glUniformMatrix4fv(viewMatrixUniform, false, engine.viewMatrix.get(engine.matrixBuffer))
