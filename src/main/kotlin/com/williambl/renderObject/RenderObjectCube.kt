@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL30.*
 import org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER
 import java.nio.IntBuffer
 
-class Cube constructor(engine: Engine) : RenderObject() {
+class RenderObjectCube constructor(engine: Engine) : RenderObject() {
 
     private var viewMatrixUniform: Int = 0
     private var projMatrixUniform: Int = 0

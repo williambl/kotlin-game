@@ -1,9 +1,8 @@
 package main.kotlin.com.williambl
 
 import com.williambl.Game
-import com.williambl.renderObject.Cube
+import com.williambl.renderObject.RenderObjectCube
 import com.williambl.renderObject.RenderObject
-import com.williambl.util.createShader
 import com.williambl.util.createWindow
 import org.joml.Matrix4f
 import org.lwjgl.BufferUtils
@@ -13,14 +12,9 @@ import org.lwjgl.glfw.GLFWFramebufferSizeCallback
 import org.lwjgl.glfw.GLFWKeyCallback
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11.*
-import org.lwjgl.opengl.GL15.*
 import org.lwjgl.opengl.GL20.*
-import org.lwjgl.opengl.GL30.*
-import org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER
 import org.lwjgl.opengl.GLUtil
 import org.lwjgl.system.MemoryUtil
-import java.io.IOException
-import java.nio.IntBuffer
 
 class Engine {
 
@@ -58,7 +52,7 @@ class Engine {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE)
 
         // Create the window
-        window = createWindow(width, height, "Cube!")
+        window = createWindow(width, height, "GameObjectCube!")
         if (window == MemoryUtil.NULL) {
             throw AssertionError("Failed to create the GLFW window")
         }
@@ -109,7 +103,7 @@ class Engine {
         glEnable(GL_CULL_FACE)
 
         /* Create all needed GL resources */
-        renderObjects.add(Cube(this))
+        renderObjects.add(RenderObjectCube(this))
     }
 
     private fun loop() {
