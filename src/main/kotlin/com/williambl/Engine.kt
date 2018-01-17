@@ -2,6 +2,7 @@ package main.kotlin.com.williambl
 
 import com.williambl.Game
 import com.williambl.renderObject.Cube
+import com.williambl.renderObject.RenderObject
 import com.williambl.util.createShader
 import com.williambl.util.createWindow
 import org.joml.Matrix4f
@@ -32,7 +33,7 @@ class Engine {
     internal var width : Int = 800
     internal var height : Int = 800
 
-    private lateinit var cube : Cube
+    private var renderObjects = mutableListOf<RenderObject>()
 
     internal var viewMatrix = Matrix4f()
     internal var projMatrix = Matrix4f()
@@ -108,7 +109,7 @@ class Engine {
         glEnable(GL_CULL_FACE)
 
         /* Create all needed GL resources */
-        cube = Cube(this)
+        renderObjects.add(Cube(this))
     }
 
     private fun loop() {
@@ -125,7 +126,9 @@ class Engine {
     }
 
     private fun render() {
-        cube.render()
+        for(rendObj in renderObjects) {
+            rendObj.render()
+        }
         glUseProgram(0)
     }
 
