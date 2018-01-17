@@ -103,7 +103,14 @@ class Engine {
         glEnable(GL_CULL_FACE)
 
         /* Create all needed GL resources */
-        renderObjects.add(RenderObjectCube(this))
+        game.init()
+        updateRenderObjs()
+    }
+
+    internal fun updateRenderObjs () {
+        game.gameObjs
+                .filter { it.renderObj != null }
+                .forEach { renderObjects.add(it.renderObj!!) }
     }
 
     private fun loop() {
