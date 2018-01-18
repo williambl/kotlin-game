@@ -1,5 +1,6 @@
 package com.williambl.renderObject
 
+import com.williambl.gameObject.GameObjectCube
 import com.williambl.util.createShader
 import main.kotlin.com.williambl.Engine
 import org.lwjgl.BufferUtils
@@ -10,7 +11,7 @@ import org.lwjgl.opengl.GL30.*
 import org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER
 import java.nio.IntBuffer
 
-class RenderObjectCube constructor(engine: Engine) : RenderObject() {
+class RenderObjectCube constructor(engine: Engine, override val gameObj: GameObjectCube) : RenderObject() {
 
     private var viewMatrixUniform: Int = 0
     private var projMatrixUniform: Int = 0
