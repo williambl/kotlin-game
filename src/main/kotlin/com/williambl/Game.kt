@@ -4,7 +4,7 @@ import com.williambl.gameObject.GameObjectCube
 import com.williambl.gameObject.GameObject
 import com.williambl.renderObject.RenderObjectCube
 import main.kotlin.com.williambl.Engine
-import org.joml.Vector3d
+import org.joml.Vector3f
 
 class Game constructor(engine: Engine){
 
@@ -13,7 +13,7 @@ class Game constructor(engine: Engine){
     internal var gameObjs = mutableListOf<GameObject>()
 
     internal fun init () {
-        gameObjs.add(GameObjectCube(engine, Vector3d(0.0, 0.0, 0.0)))
+        gameObjs.add(GameObjectCube(engine, Vector3f(0F, 0F, 0F)))
     }
 
     internal var angle = 0.0f
