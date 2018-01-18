@@ -3,6 +3,8 @@ package com.williambl.renderObject
 import com.williambl.gameObject.GameObjectCube
 import com.williambl.util.createShader
 import main.kotlin.com.williambl.Engine
+import org.joml.Matrix4f
+import org.joml.Vector3f
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL15.*
@@ -16,6 +18,8 @@ class RenderObjectCube constructor(engine: Engine, override val gameObj: GameObj
     private var viewMatrixUniform: Int = 0
     private var projMatrixUniform: Int = 0
     private var viewportSizeUniform: Int = 0
+    private var modelMatrixUniform: Int = 0
+
     private var engine : Engine = engine
 
     private var vao : Int
@@ -121,6 +125,7 @@ class RenderObjectCube constructor(engine: Engine, override val gameObj: GameObj
         viewMatrixUniform = glGetUniformLocation(program, "viewMatrix")
         projMatrixUniform = glGetUniformLocation(program, "projMatrix")
         viewportSizeUniform = glGetUniformLocation(program, "viewportSize")
+        modelMatrixUniform = glGetUniformLocation(program, "model")
         glUseProgram(0)
     }
 
@@ -135,8 +140,12 @@ class RenderObjectCube constructor(engine: Engine, override val gameObj: GameObj
     override fun render () {
         glUseProgram(program)
 
+        val modelMatrix = Matrix4f()
+        modelMatrix.translation(gameObj.position)
+
         glUniformMatrix4fv(viewMatrixUniform, false, engine.viewMatrix.get(engine.matrixBuffer))
         glUniformMatrix4fv(projMatrixUniform, false, engine.projMatrix.get(engine.matrixBuffer))
+        glUniformMatrix4fv(modelMatrixUniform, false, modelMatrix.get(engine.matrixBuffer))
         glUniform2f(viewportSizeUniform, engine.width.toFloat(), engine.width.toFloat())
 
         glBindVertexArray(vao)
