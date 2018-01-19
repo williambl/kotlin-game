@@ -13,7 +13,7 @@ class Game constructor(engine: Engine){
     internal var gameObjs = mutableListOf<GameObject>()
 
     internal fun init () {
-        gameObjs.add(GameObjectCube(engine, Vector3f(0F, 0F, 0F)))
+        gameObjs.add(GameObjectCube(engine, Vector3f(0F, 1F, 0F)))
     }
 
     internal var angle = 0.0f
