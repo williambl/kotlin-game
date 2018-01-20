@@ -22,42 +22,26 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance
 class KotlinGame : ApplicationAdapter() {
 
     lateinit var environment: Environment
+
     lateinit var camera : PerspectiveCamera
+    lateinit var camController: CameraInputController
+
     lateinit var model: Model
 
     var instances = mutableListOf<ModelInstance>()
-
-    lateinit var camController: CameraInputController
     lateinit var modelBatch: ModelBatch
 
     override fun create() {
         modelBatch = ModelBatch()
 
-        camera = PerspectiveCamera(67f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
-        camera.position.set(10f, 10f, 10f)
-        camera.lookAt(0f,0f,0f)
-        camera.near = 1f
-        camera.far = 300f
-        camera.update()
+        environment = createEnv()
 
-        camController = CameraInputController(camera)
-        Gdx.input.inputProcessor = camController
+        createCamera()
 
-        val modelBuilder = ModelBuilder()
-        model = modelBuilder.createBox(5f, 5f, 5f,
-                Material(ColorAttribute.createDiffuse(Color.GREEN)),
-                VertexAttributes.Usage.Position.toLong()
-                        or VertexAttributes.Usage.Normal.toLong())
-        instances.add(ModelInstance(model))
+        model = createCubeModel()
 
-        var instance = ModelInstance(model)
-        instance.transform.setToTranslation(0f,6f,0f)
-        instances.add(instance)
-
-        environment = Environment()
-        environment.set(ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f))
-        environment.add(DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f))
-
+        instances.add(createInstance(model,0f,0f,0f))
+        instances.add(createInstance(model,0f,6f,0f))
     }
 
     override fun render() {
@@ -71,5 +55,42 @@ class KotlinGame : ApplicationAdapter() {
 
     override fun dispose() {
         model.dispose()
+    }
+
+    fun createCubeModel() : Model {
+        val modelBuilder = ModelBuilder()
+        return modelBuilder.createBox(5f, 5f, 5f,
+                Material(ColorAttribute.createDiffuse(Color.GREEN)),
+                VertexAttributes.Usage.Position.toLong()
+                        or VertexAttributes.Usage.Normal.toLong())
+    }
+
+    fun createInstance(model: Model, x: Float, y: Float, z: Float) : ModelInstance {
+        var instance = ModelInstance(model)
+        instance.transform.setToTranslation(x,y,z)
+        return instance
+    }
+
+    fun createCamera() {
+        camera = PerspectiveCamera(67f, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
+        with(camera) {
+            position.set(10f, 10f, 10f)
+            lookAt(0f, 0f, 0f)
+            near = 1f
+            far = 300f
+            update()
+        }
+
+        camController = CameraInputController(camera)
+        Gdx.input.inputProcessor = camController
+    }
+
+    fun createEnv() : Environment {
+        environment = Environment()
+        environment.run {
+            set(ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f))
+            add(DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f))
+        }
+        return environment
     }
 }
