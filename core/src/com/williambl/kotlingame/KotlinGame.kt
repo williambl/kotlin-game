@@ -9,6 +9,9 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.sun.scenario.effect.impl.prism.PrEffectHelper.render
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
+import com.badlogic.gdx.graphics.g3d.utils.CameraInputController
+
+
 
 
 
@@ -19,6 +22,7 @@ class KotlinGame : ApplicationAdapter() {
     lateinit var camera : PerspectiveCamera
     lateinit var model: Model
     lateinit var instance: ModelInstance
+    lateinit var camController: CameraInputController
     lateinit var modelBatch: ModelBatch
 
     override fun create() {
@@ -30,6 +34,9 @@ class KotlinGame : ApplicationAdapter() {
         camera.near = 1f
         camera.far = 300f
         camera.update()
+
+        camController = CameraInputController(camera)
+        Gdx.input.inputProcessor = camController
 
         val modelBuilder = ModelBuilder()
         model = modelBuilder.createBox(5f, 5f, 5f,
