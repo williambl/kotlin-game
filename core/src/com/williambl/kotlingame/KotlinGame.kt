@@ -10,6 +10,9 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.sun.scenario.effect.impl.prism.PrEffectHelper.render
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController
+import com.badlogic.gdx.graphics.g3d.ModelInstance
+
+
 
 
 
@@ -21,7 +24,9 @@ class KotlinGame : ApplicationAdapter() {
     lateinit var environment: Environment
     lateinit var camera : PerspectiveCamera
     lateinit var model: Model
-    lateinit var instance: ModelInstance
+
+    var instances = mutableListOf<ModelInstance>()
+
     lateinit var camController: CameraInputController
     lateinit var modelBatch: ModelBatch
 
@@ -43,7 +48,11 @@ class KotlinGame : ApplicationAdapter() {
                 Material(ColorAttribute.createDiffuse(Color.GREEN)),
                 VertexAttributes.Usage.Position.toLong()
                         or VertexAttributes.Usage.Normal.toLong())
-        instance = ModelInstance(model)
+        instances.add(ModelInstance(model))
+
+        var instance = ModelInstance(model)
+        instance.transform.setToTranslation(0f,6f,0f)
+        instances.add(instance)
 
         environment = Environment()
         environment.set(ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f))
@@ -56,7 +65,7 @@ class KotlinGame : ApplicationAdapter() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
 
         modelBatch.begin(camera)
-        modelBatch.render(instance, environment)
+        modelBatch.render(instances, environment)
         modelBatch.end()
     }
 
