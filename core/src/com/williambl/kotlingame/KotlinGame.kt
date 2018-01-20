@@ -11,6 +11,14 @@ import com.sun.scenario.effect.impl.prism.PrEffectHelper.render
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController
 import com.badlogic.gdx.graphics.g3d.ModelInstance
+import com.badlogic.gdx.graphics.g3d.loader.ObjLoader
+import com.badlogic.gdx.assets.loaders.ModelLoader
+import com.badlogic.gdx.graphics.g3d.Model
+import com.badlogic.gdx.assets.AssetManager
+
+
+
+
 
 
 
@@ -26,10 +34,12 @@ class KotlinGame : ApplicationAdapter() {
     lateinit var camera : PerspectiveCamera
     lateinit var camController: CameraInputController
 
-    lateinit var model: Model
+    var assetMan = AssetManager()
 
     var instances = mutableListOf<ModelInstance>()
     lateinit var modelBatch: ModelBatch
+
+    var loading : Boolean = false
 
     override fun create() {
         modelBatch = ModelBatch()
@@ -38,13 +48,15 @@ class KotlinGame : ApplicationAdapter() {
 
         createCamera()
 
-        model = createCubeModel()
 
-        instances.add(createInstance(model,0f,0f,0f))
-        instances.add(createInstance(model,0f,6f,0f))
+        assetMan.load("data/ship.obj", Model::class.java)
+        loading = true
     }
 
     override fun render() {
+        if (loading && assetMan.update())
+            finishLoading()
+
         Gdx.gl.glViewport(0, 0, Gdx.graphics.width, Gdx.graphics.height)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
 
@@ -54,7 +66,15 @@ class KotlinGame : ApplicationAdapter() {
     }
 
     override fun dispose() {
-        model.dispose()
+        modelBatch.dispose()
+        instances.clear()
+        assetMan.dispose()
+    }
+
+    fun finishLoading() {
+        val ship = assetMan.get("data/ship.obj", Model::class.java)
+        instances.add(createInstance(ship,0f,0f,0f))
+        instances.add(createInstance(ship,0f,6f,0f))
     }
 
     fun createCubeModel() : Model {
