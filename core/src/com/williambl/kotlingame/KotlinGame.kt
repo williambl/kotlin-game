@@ -49,7 +49,7 @@ class KotlinGame : ApplicationAdapter() {
         createCamera()
 
 
-        assetMan.load("data/ship.obj", Model::class.java)
+        assetMan.load("data/ship.g3db", Model::class.java)
         loading = true
     }
 
@@ -72,7 +72,7 @@ class KotlinGame : ApplicationAdapter() {
     }
 
     fun finishLoading() {
-        val ship = assetMan.get("data/ship.obj", Model::class.java)
+        val ship = assetMan.get("data/ship.g3db", Model::class.java)
         instances.add(createInstance(ship,0f,0f,0f))
         instances.add(createInstance(ship,0f,6f,0f))
     }
