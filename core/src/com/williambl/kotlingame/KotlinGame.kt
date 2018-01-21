@@ -22,7 +22,7 @@ class KotlinGame : ApplicationAdapter() {
 
     var assetMan = AssetManager()
 
-    var skySphere : SkySphere? = null
+    lateinit var skySphere : SkySphere
     var gameObjects = mutableListOf<GameObject>()
     lateinit var modelBatch: ModelBatch
 
@@ -54,6 +54,8 @@ class KotlinGame : ApplicationAdapter() {
     override fun render() {
         if (loading && assetMan.update())
             finishLoading()
+        else if (loading && !assetMan.update())
+            return
 
         Gdx.gl.glViewport(0, 0, Gdx.graphics.width, Gdx.graphics.height)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
@@ -71,10 +73,8 @@ class KotlinGame : ApplicationAdapter() {
             }
         }
 
-        if (skySphere != null) {
-            skySphere!!.updatePosition(camera)
-            modelBatch.render(skySphere)
-        }
+        skySphere!!.updatePosition(camera)
+        modelBatch.render(skySphere)
         visibleCount++
 
         modelBatch.end()
