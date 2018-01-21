@@ -3,16 +3,10 @@ package com.williambl.kotlingame
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.*
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g3d.*
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
-import com.sun.scenario.effect.impl.prism.PrEffectHelper.render
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController
-import com.badlogic.gdx.graphics.g3d.ModelInstance
-import com.badlogic.gdx.graphics.g3d.loader.ObjLoader
-import com.badlogic.gdx.assets.loaders.ModelLoader
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.assets.AssetManager
 
@@ -25,7 +19,7 @@ class KotlinGame : ApplicationAdapter() {
 
     var assetMan = AssetManager()
 
-    var instances = mutableListOf<ModelInstance>()
+    var gameObjects = mutableListOf<GameObject>()
     lateinit var modelBatch: ModelBatch
 
     var loading : Boolean = false
@@ -50,27 +44,27 @@ class KotlinGame : ApplicationAdapter() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
 
         modelBatch.begin(camera)
-        modelBatch.render(instances, environment)
+        modelBatch.render(gameObjects, environment)
         modelBatch.end()
     }
 
     override fun dispose() {
         modelBatch.dispose()
-        instances.clear()
+        gameObjects.clear()
         assetMan.dispose()
     }
 
     fun finishLoading() {
         val scene = assetMan.get("data/scene.g3db", Model::class.java)
-        instances.add(createInstance(scene,"Ship",0f,0f,0f))
-        instances.add(createInstance(scene,"Enemy",0f,2f,0f))
-        instances.add(createInstance(scene,"Cube",0f,-2f,0f))
+        gameObjects.add(createGameObject(scene,"Ship",0f,0f,0f))
+        gameObjects.add(createGameObject(scene,"Enemy",0f,2f,0f))
+        gameObjects.add(createGameObject(scene,"Cube",0f,-2f,0f))
     }
 
-    fun createInstance(model: Model, id: String, x: Float, y: Float, z: Float) : ModelInstance {
-        var instance = ModelInstance(model, id)
-        instance.transform.setToTranslation(x,y,z)
-        return instance
+    fun createGameObject(model: Model, id: String, x: Float, y: Float, z: Float) : GameObject {
+        var gameObject = GameObject(model, id, true)
+        gameObject.transform.setToTranslation(x,y,z)
+        return gameObject
     }
 
     fun createCamera() {
