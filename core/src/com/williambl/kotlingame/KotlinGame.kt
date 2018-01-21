@@ -77,6 +77,7 @@ class KotlinGame : ApplicationAdapter() {
         gameObjects.add(createGameObject(scene,"Ship",0f,0f,0f))
         gameObjects.add(createGameObject(scene,"Enemy",0f,2f,0f))
         gameObjects.add(createGameObject(scene,"Cube",0f,-2f,0f))
+        loading = false
     }
 
     fun createGameObject(model: Model, id: String, x: Float, y: Float, z: Float) : GameObject {
