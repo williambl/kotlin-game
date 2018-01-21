@@ -14,6 +14,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.flowpowered.noise.Noise.gradientCoherentNoise3D
+import com.flowpowered.noise.NoiseQuality
 
 
 class KotlinGame : ApplicationAdapter() {
@@ -50,6 +52,8 @@ class KotlinGame : ApplicationAdapter() {
 
         createCamera()
 
+        createTerrain()
+
         inputController = FirstPersonCameraController(camera)
         Gdx.input.inputProcessor = inputController
 
@@ -84,7 +88,6 @@ class KotlinGame : ApplicationAdapter() {
         }
 
 
-
         skySphere.updatePosition(camera)
         modelBatch.render(skySphere)
         visibleCount++
@@ -105,6 +108,25 @@ class KotlinGame : ApplicationAdapter() {
         modelBatch.dispose()
         gameObjects.clear()
         assetMan.dispose()
+    }
+
+    fun createTerrain () {
+        var world = MutableList(4) { MutableList(4) {0} }
+
+        var worldString = ""
+
+        world.forEach { row ->
+
+            worldString += "\n"
+            row.forEach { tile ->
+                val i = row.indexOf(tile)
+                row[i] = (gradientCoherentNoise3D(0.0, 0.0, 0.0, 0, NoiseQuality.STANDARD) * 64).toInt()
+                worldString += """${row[i]} """
+            }
+        }
+
+        println(worldString)
+
     }
 
     fun finishLoading() {
