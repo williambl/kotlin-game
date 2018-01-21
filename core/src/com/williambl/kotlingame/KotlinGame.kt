@@ -49,6 +49,7 @@ class KotlinGame : ApplicationAdapter() {
         loading = true
     }
 
+    var visibleCount = 0
     override fun render() {
         if (loading && assetMan.update())
             finishLoading()
@@ -57,11 +58,24 @@ class KotlinGame : ApplicationAdapter() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
 
         modelBatch.begin(camera)
-        modelBatch.render(gameObjects, environment)
+
+        visibleCount = 0
+        //println(visibleCount)
+
+        gameObjects.forEach {
+            if (it.isVisible(camera)) {
+                modelBatch.render(it, environment)
+                visibleCount++
+                println(visibleCount)
+            }
+        }
+
         modelBatch.end()
 
         stringBuilder.setLength(0)
         stringBuilder.append(" FPS: ").append(Gdx.graphics.framesPerSecond)
+        //println(visibleCount)
+        stringBuilder.append(" Visible: ").append(visibleCount)
         label.setText(stringBuilder)
         stage.draw()
     }

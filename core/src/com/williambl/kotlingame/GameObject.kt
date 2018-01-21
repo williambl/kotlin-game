@@ -1,5 +1,6 @@
 package com.williambl.kotlingame
 
+import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.math.Vector3
@@ -17,5 +18,9 @@ class GameObject(model: Model, rootNode: String, mergeTransform: Boolean) : Mode
 		bounds.getCenter(center)
 		bounds.getDimensions(dimensions)
 		radius = dimensions.len() / 2f
+	}
+
+	fun isVisible(camera: Camera) : Boolean {
+		return true
 	}
 }
