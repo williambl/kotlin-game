@@ -24,7 +24,7 @@ class GameObject(model: Model, rootNode: String, mergeTransform: Boolean) : Mode
 		val position = Vector3()
 		transform.getTranslation(position)
 		position.add(center)
-		return camera.frustum.boundsInFrustum(position, dimensions)
+		return camera.frustum.sphereInFrustum(position, radius)
 
 	}
 }
