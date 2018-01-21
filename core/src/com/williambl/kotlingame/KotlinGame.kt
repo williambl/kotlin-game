@@ -63,17 +63,15 @@ class KotlinGame : ApplicationAdapter() {
         modelBatch.begin(camera)
 
         visibleCount = 0
-        //println(visibleCount)
 
         gameObjects.forEach {
             if (it.isVisible(camera)) {
                 modelBatch.render(it, environment)
                 visibleCount++
-                println(visibleCount)
             }
         }
 
-        skySphere!!.updatePosition(camera)
+        skySphere.updatePosition(camera)
         modelBatch.render(skySphere)
         visibleCount++
 
@@ -81,7 +79,6 @@ class KotlinGame : ApplicationAdapter() {
 
         stringBuilder.setLength(0)
         stringBuilder.append(" FPS: ").append(Gdx.graphics.framesPerSecond)
-        //println(visibleCount)
         stringBuilder.append(" Visible: ").append(visibleCount)
         label.setText(stringBuilder)
         stage.draw()
