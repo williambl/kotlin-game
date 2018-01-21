@@ -14,12 +14,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 
+
 class KotlinGame : ApplicationAdapter() {
 
     lateinit var environment: Environment
 
     lateinit var camera : PerspectiveCamera
-    lateinit var camController: CameraInputController
+    lateinit var inputController: CameraInputController
 
     var assetMan = AssetManager()
 
@@ -108,6 +109,10 @@ class KotlinGame : ApplicationAdapter() {
         gameObjects.add(createGameObject(scene,"Enemy",5f,0f,0f))
         gameObjects.add(createGameObject(scene,"Cube",-5f,0f,0f))
         skySphere = SkySphere(scene, "SkySphere", true)
+
+        inputController = PlayerInputController(camera, player)
+        Gdx.input.inputProcessor = inputController
+
         loading = false
     }
 
@@ -127,8 +132,6 @@ class KotlinGame : ApplicationAdapter() {
             update()
         }
 
-        camController = CameraInputController(camera)
-        Gdx.input.inputProcessor = camController
     }
 
     fun createEnv() : Environment {
