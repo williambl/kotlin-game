@@ -21,6 +21,9 @@ class GameObject(model: Model, rootNode: String, mergeTransform: Boolean) : Mode
 	}
 
 	fun isVisible(camera: Camera) : Boolean {
-		return true
+		val position = Vector3()
+		transform.getTranslation(position)
+		return camera.frustum.pointInFrustum(position)
+
 	}
 }
