@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.BoundingBox
 
-class GameObject(model: Model, rootNode: String, mergeTransform: Boolean) : ModelInstance(model, rootNode, mergeTransform) {
+open class GameObject(model: Model, rootNode: String, mergeTransform: Boolean) : ModelInstance(model, rootNode, mergeTransform) {
 	var center = Vector3()
 	var dimensions = Vector3()
 	var radius : Float = 0.0f
