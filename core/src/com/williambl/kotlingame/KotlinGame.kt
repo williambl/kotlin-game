@@ -16,17 +16,6 @@ import com.badlogic.gdx.assets.loaders.ModelLoader
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.assets.AssetManager
 
-
-
-
-
-
-
-
-
-
-
-
 class KotlinGame : ApplicationAdapter() {
 
     lateinit var environment: Environment
@@ -76,14 +65,6 @@ class KotlinGame : ApplicationAdapter() {
         instances.add(createInstance(scene,"Ship",0f,0f,0f))
         instances.add(createInstance(scene,"Enemy",0f,2f,0f))
         instances.add(createInstance(scene,"Cube",0f,-2f,0f))
-    }
-
-    fun createCubeModel() : Model {
-        val modelBuilder = ModelBuilder()
-        return modelBuilder.createBox(5f, 5f, 5f,
-                Material(ColorAttribute.createDiffuse(Color.GREEN)),
-                VertexAttributes.Usage.Position.toLong()
-                        or VertexAttributes.Usage.Normal.toLong())
     }
 
     fun createInstance(model: Model, id: String, x: Float, y: Float, z: Float) : ModelInstance {
