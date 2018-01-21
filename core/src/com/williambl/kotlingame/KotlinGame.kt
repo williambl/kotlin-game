@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 
@@ -20,7 +21,7 @@ class KotlinGame : ApplicationAdapter() {
     lateinit var environment: Environment
 
     lateinit var camera : PerspectiveCamera
-    lateinit var inputController: CameraInputController
+    lateinit var inputController: FirstPersonCameraController
 
     var assetMan = AssetManager()
 
@@ -49,6 +50,8 @@ class KotlinGame : ApplicationAdapter() {
 
         createCamera()
 
+        inputController = FirstPersonCameraController(camera)
+        Gdx.input.inputProcessor = inputController
 
         assetMan.load("data/scene.g3db", Model::class.java)
         loading = true
@@ -66,6 +69,8 @@ class KotlinGame : ApplicationAdapter() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
 
         buttonPressed = Gdx.input.isButtonPressed(Input.Buttons.LEFT)
+
+        inputController.update()
 
         modelBatch.begin(camera)
 
@@ -110,8 +115,6 @@ class KotlinGame : ApplicationAdapter() {
         gameObjects.add(createGameObject(scene,"Cube",-5f,0f,0f))
         skySphere = SkySphere(scene, "SkySphere", true)
 
-        inputController = PlayerInputController(camera, player)
-        Gdx.input.inputProcessor = inputController
 
         loading = false
     }
