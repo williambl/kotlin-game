@@ -2,6 +2,7 @@ package com.williambl.kotlingame
 
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.*
 import com.badlogic.gdx.graphics.g3d.*
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
@@ -51,6 +52,7 @@ class KotlinGame : ApplicationAdapter() {
     }
 
     var visibleCount = 0
+    var buttonPressed = false
     override fun render() {
         if (loading && assetMan.update())
             finishLoading()
@@ -59,6 +61,8 @@ class KotlinGame : ApplicationAdapter() {
 
         Gdx.gl.glViewport(0, 0, Gdx.graphics.width, Gdx.graphics.height)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
+
+        buttonPressed = Gdx.input.isButtonPressed(Input.Buttons.LEFT)
 
         modelBatch.begin(camera)
 
@@ -71,6 +75,8 @@ class KotlinGame : ApplicationAdapter() {
             }
         }
 
+
+
         skySphere.updatePosition(camera)
         modelBatch.render(skySphere)
         visibleCount++
@@ -80,6 +86,9 @@ class KotlinGame : ApplicationAdapter() {
         stringBuilder.setLength(0)
         stringBuilder.append(" FPS: ").append(Gdx.graphics.framesPerSecond)
         stringBuilder.append(" Visible: ").append(visibleCount)
+        if (buttonPressed) {
+            stringBuilder.append(" Button Pressed!")
+        }
         label.setText(stringBuilder)
         stage.draw()
     }
