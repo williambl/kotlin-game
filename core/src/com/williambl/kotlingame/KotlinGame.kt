@@ -24,6 +24,8 @@ class KotlinGame : ApplicationAdapter() {
     var assetMan = AssetManager()
 
     lateinit var skySphere : SkySphere
+    lateinit var player : Player
+
     var gameObjects = mutableListOf<GameObject>()
     lateinit var modelBatch: ModelBatch
 
@@ -101,7 +103,8 @@ class KotlinGame : ApplicationAdapter() {
 
     fun finishLoading() {
         val scene = assetMan.get("data/scene.g3db", Model::class.java)
-        gameObjects.add(createGameObject(scene,"Ship",0f,0f,0f))
+        player = Player(scene,"Ship",true)
+        gameObjects.add(player)
         gameObjects.add(createGameObject(scene,"Enemy",5f,0f,0f))
         gameObjects.add(createGameObject(scene,"Cube",-5f,0f,0f))
         skySphere = SkySphere(scene, "SkySphere", true)
