@@ -89,8 +89,8 @@ class KotlinGame : ApplicationAdapter() {
     fun finishLoading() {
         val scene = assetMan.get("data/scene.g3db", Model::class.java)
         gameObjects.add(createGameObject(scene,"Ship",0f,0f,0f))
-        gameObjects.add(createGameObject(scene,"Enemy",0f,2f,0f))
-        gameObjects.add(createGameObject(scene,"Cube",0f,-2f,0f))
+        gameObjects.add(createGameObject(scene,"Enemy",5f,0f,0f))
+        gameObjects.add(createGameObject(scene,"Cube",-5f,0f,0f))
         loading = false
     }
 
