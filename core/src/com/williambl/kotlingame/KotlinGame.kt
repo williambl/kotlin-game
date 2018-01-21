@@ -22,6 +22,7 @@ class KotlinGame : ApplicationAdapter() {
 
     var assetMan = AssetManager()
 
+    var skySphere : GameObject? = null
     var gameObjects = mutableListOf<GameObject>()
     lateinit var modelBatch: ModelBatch
 
@@ -70,6 +71,11 @@ class KotlinGame : ApplicationAdapter() {
             }
         }
 
+        if (skySphere != null) {
+            modelBatch.render(skySphere)
+        }
+        visibleCount++
+
         modelBatch.end()
 
         stringBuilder.setLength(0)
@@ -91,6 +97,7 @@ class KotlinGame : ApplicationAdapter() {
         gameObjects.add(createGameObject(scene,"Ship",0f,0f,0f))
         gameObjects.add(createGameObject(scene,"Enemy",5f,0f,0f))
         gameObjects.add(createGameObject(scene,"Cube",-5f,0f,0f))
+        skySphere = createGameObject(scene, "SkySphere", 0f, 0f, 0f)
         loading = false
     }
 
