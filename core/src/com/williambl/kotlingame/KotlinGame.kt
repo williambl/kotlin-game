@@ -9,6 +9,9 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Label
 
 class KotlinGame : ApplicationAdapter() {
 
@@ -24,7 +27,17 @@ class KotlinGame : ApplicationAdapter() {
 
     var loading : Boolean = false
 
+    lateinit var stage : Stage
+    lateinit var font : BitmapFont
+    lateinit var label : Label
+    var stringBuilder = com.badlogic.gdx.utils.StringBuilder()
+
     override fun create() {
+        stage = Stage()
+        font = BitmapFont()
+        label = Label(" ", Label.LabelStyle(font, Color.GREEN))
+        stage.addActor(label)
+
         modelBatch = ModelBatch()
 
         environment = createEnv()
@@ -46,6 +59,11 @@ class KotlinGame : ApplicationAdapter() {
         modelBatch.begin(camera)
         modelBatch.render(gameObjects, environment)
         modelBatch.end()
+
+        stringBuilder.setLength(0)
+        stringBuilder.append(" FPS: ").append(Gdx.graphics.framesPerSecond)
+        label.setText(stringBuilder)
+        stage.draw()
     }
 
     override fun dispose() {
