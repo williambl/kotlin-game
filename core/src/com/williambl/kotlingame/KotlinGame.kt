@@ -49,7 +49,7 @@ class KotlinGame : ApplicationAdapter() {
         createCamera()
 
 
-        assetMan.load("data/ship.g3db", Model::class.java)
+        assetMan.load("data/scene.g3db", Model::class.java)
         loading = true
     }
 
@@ -72,9 +72,10 @@ class KotlinGame : ApplicationAdapter() {
     }
 
     fun finishLoading() {
-        val ship = assetMan.get("data/ship.g3db", Model::class.java)
-        instances.add(createInstance(ship,0f,0f,0f))
-        instances.add(createInstance(ship,0f,6f,0f))
+        val scene = assetMan.get("data/scene.g3db", Model::class.java)
+        instances.add(createInstance(scene,"Ship",0f,0f,0f))
+        instances.add(createInstance(scene,"Enemy",0f,2f,0f))
+        instances.add(createInstance(scene,"Cube",0f,-2f,0f))
     }
 
     fun createCubeModel() : Model {
@@ -85,8 +86,8 @@ class KotlinGame : ApplicationAdapter() {
                         or VertexAttributes.Usage.Normal.toLong())
     }
 
-    fun createInstance(model: Model, x: Float, y: Float, z: Float) : ModelInstance {
-        var instance = ModelInstance(model)
+    fun createInstance(model: Model, id: String, x: Float, y: Float, z: Float) : ModelInstance {
+        var instance = ModelInstance(model, id)
         instance.transform.setToTranslation(x,y,z)
         return instance
     }
