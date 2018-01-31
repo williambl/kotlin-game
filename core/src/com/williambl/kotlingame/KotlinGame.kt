@@ -39,6 +39,8 @@ class KotlinGame : ApplicationAdapter() {
     lateinit var label : Label
     var stringBuilder = com.badlogic.gdx.utils.StringBuilder()
 
+    val noise = FastNoise()
+
     override fun create() {
         stage = Stage()
         font = BitmapFont()
@@ -55,6 +57,8 @@ class KotlinGame : ApplicationAdapter() {
 
         inputController = FirstPersonCameraController(camera)
         Gdx.input.inputProcessor = inputController
+
+        noise.SetNoiseType(FastNoise.NoiseType.Simplex)
 
         assetMan.load("data/scene.g3db", Model::class.java)
         loading = true
@@ -110,7 +114,7 @@ class KotlinGame : ApplicationAdapter() {
     }
 
     fun createTerrain () {
-        var world = MutableList(4) { MutableList(4) {0} }
+        var world = MutableList(32) { MutableList(32) {1} }
 
         var worldString = ""
 
@@ -119,7 +123,7 @@ class KotlinGame : ApplicationAdapter() {
             worldString += "\n"
             row.forEach { tile ->
                 val i = row.indexOf(tile)
-                //row[i] = (gradientCoherentNoise3D(j.toDouble() * 10, i.toDouble() * 10, 0.0, 5, NoiseQuality.STANDARD) * 64).toInt()
+                row[i] = (noise.GetNoise(j.toFloat(), i.toFloat()) * 64).toInt()
                 worldString += """${row[i]} """
             }
         }
