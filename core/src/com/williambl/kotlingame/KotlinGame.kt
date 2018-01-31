@@ -14,8 +14,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.flowpowered.noise.Noise.gradientCoherentNoise3D
-import com.flowpowered.noise.NoiseQuality
+import fastnoise.FastNoise
 
 
 class KotlinGame : ApplicationAdapter() {
@@ -116,11 +115,11 @@ class KotlinGame : ApplicationAdapter() {
         var worldString = ""
 
         world.forEach { row ->
-
+            val j = world.indexOf(row)
             worldString += "\n"
             row.forEach { tile ->
                 val i = row.indexOf(tile)
-                row[i] = (gradientCoherentNoise3D(0.0, 0.0, 0.0, 0, NoiseQuality.STANDARD) * 64).toInt()
+                //row[i] = (gradientCoherentNoise3D(j.toDouble() * 10, i.toDouble() * 10, 0.0, 5, NoiseQuality.STANDARD) * 64).toInt()
                 worldString += """${row[i]} """
             }
         }

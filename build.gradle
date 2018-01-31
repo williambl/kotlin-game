@@ -67,7 +67,7 @@ project(":core") {
         compile group: 'io.github.libktx', name: 'ktx-ashley', version: '1.9.7-b1'
         compile group: 'io.github.libktx', name: 'ktx-assets', version: '1.9.7-b1'
         compile group: 'io.github.libktx', name: 'ktx-math', version: '1.9.7-b1'
-        compile 'com.flowpowered:flow-noise:1.0.1-SNAPSHOT'
+        compile files ('libs/FastNoise.jar')
     }
 }
 
