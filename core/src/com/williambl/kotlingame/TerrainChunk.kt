@@ -6,12 +6,26 @@ internal class TerrainChunk(val heightMap: MutableList<MutableList<Int>>, val ve
     val vertices: FloatArray
     val indices: ShortArray
 
+    var flatHeightMap = MutableList(0) {0}
+
+
     init {
         this.width = heightMap.size.toShort()
         this.height = heightMap[0].size.toShort()
-        this.vertices = FloatArray(heightMap.size * vertexSize)
+
+        heightMap.forEach { row ->
+            val j = heightMap.indexOf(row)
+            row.forEach { tile ->
+                val i = row.indexOf(tile)
+                flatHeightMap.add(row[i])
+            }
+        }
+
+        this.vertices = FloatArray(flatHeightMap.size * vertexSize)
         this.indices = ShortArray(width * height * 6)
 
+        println(flatHeightMap.size)
+        println(flatHeightMap.toString())
         buildIndices()
         buildVertices()
     }
@@ -24,10 +38,12 @@ internal class TerrainChunk(val heightMap: MutableList<MutableList<Int>>, val ve
         var hIdx = 0
         val inc = vertexSize - 3
 
-        for (z in 0 until heightPitch) {
-            for (x in 0 until widthPitch) {
+
+        for (z in 0 until height) {
+            for (x in 0 until width) {
+                println(idx)
                 vertices[idx++] = x.toFloat()
-                vertices[idx++] = heightMap[hIdx++]
+                vertices[idx++] = flatHeightMap[hIdx++].toFloat()
                 vertices[idx++] = z.toFloat()
                 idx += inc
             }

@@ -128,7 +128,7 @@ class KotlinGame : ApplicationAdapter() {
             }
         }
         println(worldString)
-        var terrainChunk = TerrainChunk(world, 2)
+        var terrainChunk = TerrainChunk(world, 4)
     }
 
     fun finishLoading() {
