@@ -127,9 +127,8 @@ class KotlinGame : ApplicationAdapter() {
                 worldString += """${row[i]} """
             }
         }
-
         println(worldString)
-
+        var terrainChunk = TerrainChunk(world, 2)
     }
 
     fun finishLoading() {
